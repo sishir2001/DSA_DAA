@@ -15,11 +15,11 @@ void twoOddOccuring(int *arr,int n){
         XorSum ^= arr[i]; // only two odd occuring , x^y
     }
 
-    // finding the left most set bit 
-    int a = 1;
-    while((XorSum&a) == 0){
-        a = a<<1;
-    }
+    // cout << "XorSum : "<<XorSum <<"\n";
+
+    // finding the right most set bit 
+    int a = XorSum & (~(XorSum-1));
+    // cout << "a : "<<a<<"\n";
     // segregating the array according to the set bit and finding XOR sum 
     int XorSum0 = 0,XorSum1 = 0; // @param XorSum0 for the set bit 0 and XorSum1 for 1
     for(int i = 0;i<n;i++){
