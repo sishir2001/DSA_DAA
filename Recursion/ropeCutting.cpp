@@ -14,17 +14,19 @@ typedef long long ll;
 #define FOR(a,n) for(int (a) = 0;(a) < (n);(a)++) // regular for loop
 
 int ropeCutting(int n,int a,int b,int c){
+
     // I think this is the naive solution 
+    // Will be a recursion tree
     // !T(n) = ?
     // !S(n) = ?
     if(n == 0)
         return 0;
         
-    int mi = min(min(a,b),c);
+    int mi = min(a,b,c); // mi : minimum
     if(n < 0 || n < mi)
         return -1;
     
-    int rem = n % mi;
+    int rem = n % mi; // rem : remainder 
     if(rem == 0)
         return n/mi;
     
@@ -32,10 +34,10 @@ int ropeCutting(int n,int a,int b,int c){
     int res_b = ropeCutting(n-b,a,b,c);
     int res_c = ropeCutting(n-c,a,b,c);
 
-    int ma = max(max(res_a,res_b),res_c);
-    if(ma == -1)
+    int res = max(res_a,res_b,res_c); // res : result 
+    if(res == -1)
         return -1;
-    return ma+1;// +1 for current cutting of the rope
+    return res+1;// +1 for current cutting of the rope
 }
 
 int main(){
