@@ -1,2 +1,2 @@
-# DSA_Practice.
-just practice codes of DSA(data structures and algorithms).
+# Data Structures and Algotithms.
+Code snippets of different algorithms 
