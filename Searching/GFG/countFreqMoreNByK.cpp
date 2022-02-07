@@ -1,7 +1,3 @@
-// only one element will be repeated 
-// 0 <= arr[i] <= n-2
-// the repeating element can be repeated any number of times
-
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -30,7 +26,7 @@ typedef vector<uint> v_uint;
 #define FOR_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 #define FOR_REV_great_or_equal(a,end,start) for(int (a) = (start);(a) >= (end);(a)--) // regular for loop
 
-ll findRepeating(v_ll nums);
+ll countFrequencies(v_ll nums,ll k);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -38,32 +34,37 @@ int main(){
     cout.tie(NULL);
     freopen("input.txt","r",stdin);
     freopen("output.txt","w",stdout);
-    ll T,n;
+    ll T,n,k;
     cin >> T;
     while(T){
-        cin >> n;
+        cin >> n>>k;
         v_ll nums(n); // vector
+
         FOR(i,n){
             cin >> nums[i];
         }
-        cout << findRepeating(nums)<<"\n";
+
+        cout << countFrequencies(nums,k)<<"\n";
         nums.clear();
         T--;
     }
     return 0;
 }
 
-ll findRepeating(v_ll nums){
-    ll slow = nums[0]+1,fast = nums[0];
-    do{
-        slow = nums[slow]+1;
-        fast = nums[nums[fast]+1]+1;
-    }while(slow != fast);
-    
-    slow = nums[0];
-    while(slow != fast){
-        slow = nums[slow]+1;
-        fast = nums[fast]+1;
+ll countFrequencies(v_ll nums,ll k){
+    // use hashing to count the frequencies 
+    ll n = nums.size(),count = 0;
+    ll threshhold = n/k;
+    unordered_map<int,int> mp;
+    // traversing through the array
+    FOR(i,n){
+        mp[nums[i]]++;
     }
-    return slow-1;
+    // traversing through the map
+    for(auto x : mp){
+        // if(x.second >= threshhold)
+        //     count ++;
+        cout << x.first << " "<<x.second <<"\n";
+    }
+    return count;
 }

@@ -2,6 +2,7 @@
 using namespace std;
 
 typedef long long ll;
+typedef unsigned long long ull;
 typedef vector<ll> v_ll;
 typedef vector<int> v_int;
 
@@ -17,7 +18,7 @@ typedef vector<int> v_int;
 #define FOR_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 #define FOR_REV_great_or_equal(a,end,start) for(int (a) = (start);(a) >= (end);(a)--) // regular for loop
 
-ll sumRange(v_ll prefixSum,ll n,ll sum,ll limit);
+ll sumRange(v_ll prefixSum,ll n,ull sum,ll limit);
 v_ll sumInRange(v_ll nums,v_ll l,v_ll r);
 void printVector(v_ll res);
 
@@ -58,7 +59,7 @@ int main(){
     return 0;
 }
 
-ll sumRange(v_ll prefixSum,ll n,ll sum,ll limit){
+ll sumRange(v_ll prefixSum,ll n,ull sum,ll limit){
     if(limit == -1)
         return 0;
     ll k = limit%n,m = limit/n;

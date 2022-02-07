@@ -19,6 +19,8 @@ typedef vector<int> vi;
 #define FOR_custom_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 
 ll countOnes(vll arr);
+ll countOnesInBinarySortedArray(vll nums);
+ll firstOccurenceOne(vll nums,ll n);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -35,6 +37,7 @@ int main(){
             cin >> nums[i];
         }
         cout << countOnes(nums)<<"\n";
+        cout << countOnesInBinarySortedArray(nums)<<"\n";
         nums.clear();
         T--;
     }
@@ -60,4 +63,29 @@ ll countOnes(vll arr){
             l = m+1;
     }
     return 0;// never addressed
+}
+ll countOnesInBinarySortedArray(vll nums){
+    ll n = nums.size();
+    if(nums[n-1] != 1)
+        return 0;
+    // finding the first occurence of the 1
+    ll firstOccurence = firstOccurenceOne(nums,n);
+    return (firstOccurence!=1)?(n - firstOccurence):0;
+}
+ll firstOccurenceOne(vll nums,ll n){
+    ll l = 0,r = n-1;
+    while(l <= r){
+        ll m = (l+r)/2;
+        if(nums[m] == 0){
+            l = m+1;
+        }
+        else{
+            if(m!=0 && nums[m] == nums[m-1])
+                r = m-1;
+            else 
+                return m;
+        }
+    }
+    // no occurence of 1
+    return -1;
 }

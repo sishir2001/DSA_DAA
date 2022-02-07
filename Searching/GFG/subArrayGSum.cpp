@@ -1,7 +1,3 @@
-// only one element will be repeated 
-// 0 <= arr[i] <= n-2
-// the repeating element can be repeated any number of times
-
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -30,7 +26,8 @@ typedef vector<uint> v_uint;
 #define FOR_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 #define FOR_REV_great_or_equal(a,end,start) for(int (a) = (start);(a) >= (end);(a)--) // regular for loop
 
-ll findRepeating(v_ll nums);
+v_ll subarraySum(v_ll nums,ll s);
+void printVector(v_ll nums);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -38,32 +35,55 @@ int main(){
     cout.tie(NULL);
     freopen("input.txt","r",stdin);
     freopen("output.txt","w",stdout);
-    ll T,n;
+    ll T,n,s;
     cin >> T;
     while(T){
-        cin >> n;
+        cin >> n >> s;
         v_ll nums(n); // vector
         FOR(i,n){
             cin >> nums[i];
         }
-        cout << findRepeating(nums)<<"\n";
+        printVector(subarraySum(nums,s));
         nums.clear();
         T--;
     }
     return 0;
 }
 
-ll findRepeating(v_ll nums){
-    ll slow = nums[0]+1,fast = nums[0];
-    do{
-        slow = nums[slow]+1;
-        fast = nums[nums[fast]+1]+1;
-    }while(slow != fast);
-    
-    slow = nums[0];
-    while(slow != fast){
-        slow = nums[slow]+1;
-        fast = nums[fast]+1;
+v_ll subarraySum(v_ll nums,ll s){
+    // ! nums contain all non-negative integers
+    // ! not sorted array
+    // T(N) = O(n);
+    // S(N) = O(1);
+
+    v_ll res;
+    ll n = nums.size(),sum = nums[0],l = 0,r = 1;
+    while(r < n && l < n){
+        if(l > r){
+            r = l;
+            sum = 0;
+        }
+        if(sum + nums[r] <= s){
+            sum += nums[r];
+            if(sum == s){
+                res.PB(l+1);
+                res.PB(r+1);
+                return res;
+            }
+            r++;
+        }
+        else
+            sum = sum - nums[l++];
     }
-    return slow-1;
+
+    res.PB(-1);
+    return res;
+}
+
+void printVector(v_ll nums){
+    ll n = nums.size();
+    FOR(i,n){
+        cout <<nums[i]<<" ";
+    }
+    cout << "\n";
 }

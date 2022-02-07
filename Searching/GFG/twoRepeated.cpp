@@ -1,7 +1,3 @@
-// only one element will be repeated 
-// 0 <= arr[i] <= n-2
-// the repeating element can be repeated any number of times
-
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -30,7 +26,8 @@ typedef vector<uint> v_uint;
 #define FOR_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 #define FOR_REV_great_or_equal(a,end,start) for(int (a) = (start);(a) >= (end);(a)--) // regular for loop
 
-ll findRepeating(v_ll nums);
+void twoRepeated(ll *a,ll n);
+void printVector(ll *a,ll n);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -42,28 +39,32 @@ int main(){
     cin >> T;
     while(T){
         cin >> n;
-        v_ll nums(n); // vector
+        ll *a = new ll[n];
         FOR(i,n){
-            cin >> nums[i];
+            cin >> a[i];
         }
-        cout << findRepeating(nums)<<"\n";
-        nums.clear();
+        twoRepeated(a,n);
+        delete []a;
         T--;
     }
     return 0;
 }
 
-ll findRepeating(v_ll nums){
-    ll slow = nums[0]+1,fast = nums[0];
-    do{
-        slow = nums[slow]+1;
-        fast = nums[nums[fast]+1]+1;
-    }while(slow != fast);
-    
-    slow = nums[0];
-    while(slow != fast){
-        slow = nums[slow]+1;
-        fast = nums[fast]+1;
+void twoRepeated(ll *a,ll n){
+    ll mx = n-1;
+    FOR(i,n){
+        ll ele = a[i]%mx;
+        a[ele] = a[ele] + mx;
     }
-    return slow-1;
+    FOR(i,n){
+        ll x = a[i]/mx;
+        if(x == 2)
+            cout << i <<" ";
+    }
+    cout << "\n";
+}
+void printVector(ll *a,ll n){
+    FOR(i,n)
+        cout << a[i] <<" ";
+    cout <<"\n";
 }

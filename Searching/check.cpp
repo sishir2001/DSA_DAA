@@ -1,7 +1,3 @@
-// only one element will be repeated 
-// 0 <= arr[i] <= n-2
-// the repeating element can be repeated any number of times
-
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -30,7 +26,8 @@ typedef vector<uint> v_uint;
 #define FOR_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 #define FOR_REV_great_or_equal(a,end,start) for(int (a) = (start);(a) >= (end);(a)--) // regular for loop
 
-ll findRepeating(v_ll nums);
+void swapVector(v_ll& num1,v_ll& num2);
+void printVector(v_ll& num,ll n);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -38,32 +35,39 @@ int main(){
     cout.tie(NULL);
     freopen("input.txt","r",stdin);
     freopen("output.txt","w",stdout);
-    ll T,n;
+    ll T,n,m;
     cin >> T;
     while(T){
-        cin >> n;
-        v_ll nums(n); // vector
+        cin >> n >> m;
+        v_ll nums1(n); // vector
+        v_ll nums2(m); // vector
         FOR(i,n){
-            cin >> nums[i];
+            cin >> nums1[i];
         }
-        cout << findRepeating(nums)<<"\n";
-        nums.clear();
+        FOR(i,m){
+            cin >> nums2[i];
+        }
+        swapVector(nums1,nums2);
+        nums1.clear();
+        nums2.clear();
         T--;
     }
     return 0;
 }
 
-ll findRepeating(v_ll nums){
-    ll slow = nums[0]+1,fast = nums[0];
-    do{
-        slow = nums[slow]+1;
-        fast = nums[nums[fast]+1]+1;
-    }while(slow != fast);
-    
-    slow = nums[0];
-    while(slow != fast){
-        slow = nums[slow]+1;
-        fast = nums[fast]+1;
+
+
+void swapVector(v_ll& num1,v_ll& num2){
+    ll m = num1.size() , n = num2.size();
+    if(m > n){
+        swap(num1,num2);
+        swap(m,n);
     }
-    return slow-1;
+    printVector(num1,m);
+    printVector(num2,n);
+}
+void printVector(v_ll& num,ll n){
+    FOR(i,n)
+        cout << num[i] <<" ";
+    cout << "\n";
 }

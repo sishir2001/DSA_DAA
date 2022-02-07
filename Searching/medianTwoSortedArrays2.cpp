@@ -1,7 +1,3 @@
-// only one element will be repeated 
-// 0 <= arr[i] <= n-2
-// the repeating element can be repeated any number of times
-
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -30,7 +26,7 @@ typedef vector<uint> v_uint;
 #define FOR_less_or_equal(a,end,start) for(int (a) = (start);(a) <= (end);(a)++) // regular for loop
 #define FOR_REV_great_or_equal(a,end,start) for(int (a) = (start);(a) >= (end);(a)--) // regular for loop
 
-ll findRepeating(v_ll nums);
+double median(ll *a1,ll n1,ll *a2,ll n2);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -38,32 +34,53 @@ int main(){
     cout.tie(NULL);
     freopen("input.txt","r",stdin);
     freopen("output.txt","w",stdout);
-    ll T,n;
+    ll T,n1,n2;
     cin >> T;
     while(T){
-        cin >> n;
-        v_ll nums(n); // vector
-        FOR(i,n){
-            cin >> nums[i];
+        cin >> n1 >> n2;
+        ll *a1 = new ll[n1],*a2 = new ll[n2];
+        FOR(i,n1){
+            cin >> a1[i];
         }
-        cout << findRepeating(nums)<<"\n";
-        nums.clear();
+        FOR(i,n2){
+            cin >> a2[i];
+        }
+
+        cout << median(a1,n1,a2,n2) <<"\n";
+
+        delete []a1;
+        delete []a2;
         T--;
     }
-    return 0;
+    return -1.0;
 }
 
-ll findRepeating(v_ll nums){
-    ll slow = nums[0]+1,fast = nums[0];
-    do{
-        slow = nums[slow]+1;
-        fast = nums[nums[fast]+1]+1;
-    }while(slow != fast);
-    
-    slow = nums[0];
-    while(slow != fast){
-        slow = nums[slow]+1;
-        fast = nums[fast]+1;
+double median(ll *a1,ll n1,ll *a2,ll n2){
+    if(n1 > n2){
+        swap(a1,a2);
+        swap(n1,n2);
     }
-    return slow-1;
+
+    ll l = 0,r = n1-1,thresh = (n1+n2+1)/2;
+    while(l <= r){
+        ll i1 = (l+r)/2;
+        ll i2 = thresh - i1;
+
+        ll mn1 = (i1 < n1)?a1[i1]:INT_MAX;
+        ll mx1 = (i1 > 0)?a1[i1-1]:INT_MIN;
+
+        ll mn2 = (i2 < n2)?a2[i2]:INT_MAX;
+        ll mx2= (i2 > 0)?a2[i2-1]:INT_MIN;
+
+        ll mx = max(mx1,mx2),mn = min(mn1,mn2);
+        if(mx <= mn){
+            // found the median
+            return (((n1+n2)&1) == 0)?(double)(mx+mn)/2:(double)mx/1;
+        }
+        else if(mx1 > mn2)
+            r = i1-1;
+        else 
+            l = i1+1;
+    }
+    return 0.0; // ! should never be returned
 }
