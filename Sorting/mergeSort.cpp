@@ -108,7 +108,8 @@ void mergeSort(ll *nums,ll l,ll r){
     if(l >= r)
         return;
     // dividing the array into two halfes
-    ll m = (l+r)/2;
+
+    ll m = l + (r-l)/2; // ! to avoid overflow , if l and r are high
     mergeSort(nums,l,m);
     mergeSort(nums,m+1,r);
     merge(nums,l,m,r);
