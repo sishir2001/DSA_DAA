@@ -61,8 +61,8 @@ double median(ll *a1,ll n1,ll *a2,ll n2){
         swap(n1,n2);
     }
 
-    ll l = 0,r = n1-1,thresh = (n1+n2+1)/2;
-    while(l <= r){
+    ll l = 0,r = n1,thresh = (n1+n2+1)/2;
+    while(l < r){
         ll i1 = (l+r)/2;
         ll i2 = thresh - i1;
 
