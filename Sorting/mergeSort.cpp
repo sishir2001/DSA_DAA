@@ -63,7 +63,7 @@ void merge(ll *nums,ll l,ll m,ll r){
     // @param r: end index
 
     // ! T(n) = O(n)
-    // ! S(n) = O(1)
+    // ! S(n) = O(n)
     // part of mergeSort
     ll n1 = m-l+1,n2 = r-m;
 
@@ -101,6 +101,10 @@ void mergeSort(ll *nums,ll l,ll r){
     // @param nums : pointer to the array that has to be sorted
     // @param l : lowerBound index
     // @param r : upperBound index
+
+    // !T(n) = O(nlogn)
+    // !S(n) = O(n)
+
     if(l >= r)
         return;
     // dividing the array into two halfes
