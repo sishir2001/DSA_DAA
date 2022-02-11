@@ -29,8 +29,10 @@ typedef vector<uint> v_uint;
 
 int partition(ll *a,ll l,ll h,ll p);
 int Lpartition(ll *a,ll l,ll r);
+int Hpartition(ll *a,ll l,ll r);
 void printArray(ll *a,ll n);
 void quickSort(ll *a,ll l,ll r);
+void HoareQuickSort(ll *a,ll l,ll r);
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -47,7 +49,7 @@ int main(){
             cin >> a[i];
         }
 
-        quickSort(a,0,n-1);
+        HoareQuickSort(a,0,n-1);
         printArray(a,n);
 
         delete []a;
@@ -57,6 +59,7 @@ int main(){
 }
 
 void quickSort(ll *a,ll l,ll r){
+    // ? quicksort using lumuto's partition
     if(l >= r)
         return;
 
@@ -116,4 +119,36 @@ int Lpartition(ll *a,ll l,ll r){
     }
     swap(a[i+1],a[r]);
     return i+1;
+}
+
+int Hpartition(ll *a,ll l,ll r){
+    // !T(n) = O(n)
+    // !S(n) = O(1)
+    // ! doesnt not garauntee the positioning of pivot in its right place
+    // ? Hoare's Partition
+    ll i = l-1,j = r+1,pivot = a[l];
+    while(true){
+        do{
+            i++;
+        }while(a[i] < pivot);
+        do{
+            j--;
+        }while(a[j] > pivot);
+        if(i >= j) return j;
+        swap(a[i],a[j]);
+    }
+}
+
+void HoareQuickSort(ll *a,ll l,ll r){
+    // ? using Hoare's Partition
+    //!T(N) = O(nlogn || n^2)
+    //!S(N) = O(1)
+
+    if(l >= r)
+        return;
+
+    ll p = Hpartition(a,l,r);
+
+    HoareQuickSort(a,l,p);
+    HoareQuickSort(a,p+1,r);
 }
