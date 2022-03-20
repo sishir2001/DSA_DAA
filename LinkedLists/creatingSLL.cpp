@@ -195,7 +195,159 @@ Node *deleteTail(Node *head){
     return head;
 }
 
+Node *sortedInsertLL(Node *head,int data){
+    // !T(N) = O(N)
+    // !S(N) = O(1)
 
+    Node *temp = new Node(data);
+    if(!head)
+        return temp;
+    Node *prev = NULL,*curr = head;
+    while(curr){
+        if(curr->data >= data){
+            // need to insert here
+            if(!prev){
+                // !insertHead
+                temp->next = head;
+                head = temp;
+            }
+            else{
+                temp->next = curr;
+                prev->next = temp;
+            }
+            return head;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+    // !insertEnd
+    prev->next = temp;
+    return head;
+}
+
+void middleSLL(Node *head){
+    // !T(N) = O(N)
+    // !S(N) = O(1)
+    // * only one traversal of linked list - two pointer approach (slow and fast)
+    if(!head)
+        return;
+    if(!head->next){
+        cout << "Middle element : "<< head->data <<"\n";
+        return;
+    }
+    
+    Node *s = head,*f = head;
+    // f != NULL and f->next != NULL
+    while(f && f->next){
+        f = f->next->next;
+        s = s->next;
+    }
+    cout << "Middle element : "<< s->data <<"\n";
+}
+
+void findNthNodeFromEndNaive(Node *head,int n){
+    // !T(N) = O(N)
+    // !S(N) = O(1)
+
+    if(!head)
+        return;
+    if(!head->next){
+        // single node 
+        if(n == 1)
+            cout << "Finding nth node from end : "<<head->data<<"\n";
+        return;
+    }
+
+    // finding the length of the SLL
+    int count = 1;
+    Node *curr = head->next;
+    while(curr){
+        curr = curr->next;
+        count++;
+    }
+    if(count - n < 0)
+        return;
+
+    // finding the element
+    curr = head;
+    while(curr){
+        if(count == n){
+            cout << "Finding nth node from end : "<<curr->data<<"\n";
+            return;
+        }
+        curr = curr->next;
+        count--;
+    }
+}
+
+void findNthNodeFromEndOpt(Node *head,int n){
+    // ! T(N) = O(N)
+    // ! S(N) = O(1)
+    // * only one traversal of linked list
+
+    // using two pointer approach
+    if(!head)
+        return;
+    // moving 'first' pointer n positions forward from head
+    Node *first = head,*second = head;
+    int count = 0;
+    while(first){
+        if(count == n)
+            break;
+        count ++;
+        first = first->next;
+    }
+    if(!first)
+        return;
+    while(first){
+        second = second->next;
+        first = first->next;
+    }
+    cout << "Nth node from end : "<<second->data <<"\n";
+}
+
+Node *reverseLL(Node *head){
+    // !T(N) = O(N)
+    // !S(N) = O(1)
+
+    if(!head)
+        return NULL;
+    if(!head->next)
+        return head;
+    
+    Node *prev = NULL,*curr = NULL;
+    while(head){
+        curr = head;
+        head = head->next;
+        curr->next = prev;
+        prev = curr;
+    }
+    return curr;
+}
+
+Node *removeDuplicatesFromSortedLL(Node *h){
+    // !T(N) = O(N)
+    // !S(N) = O(1)
+    if(!h)
+        return NULL;
+    if(!h->next) // ? single node
+        return h;
+    
+    Node *prev = h,*curr = h->next;
+    while(curr){
+        if(prev->data == curr->data){
+            prev->next = curr->next;
+            Node *temp = curr;
+            curr = prev->next;
+            delete temp;
+        }
+        else{
+            curr = curr->next;
+            prev = prev->next;
+        }
+    }
+    return h;
+}
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -204,29 +356,15 @@ int main(){
     
     // we need to allocate the struct in heap , dynamic allocation
     Node *head = insertBegin(NULL,30);
-    // Single_LL *ll = new Single_LL(head,head);
+    head = insertBegin(head,30);
+    head = insertBegin(head,30);
     head = insertBegin(head,20);
-    // ll->head = head;
-    
+    head = insertBegin(head,20);
     head = insertBegin(head,10);
-    // ll->head = head;
     printSLL(head);
 
-    // inserting at the end 
-    head = insertEnd(head,40);
+    head = removeDuplicatesFromSortedLL(head);
     printSLL(head);
-
-    head = deleteHead(head);
-    printSLL(head);
-
-    head = deleteTail(head);
-    printSLL(head);
-
-
-    head = insertAtAnyPos(head,3,200);
-    printSLL(head);
-
-    cout << searchLinkedList(head,30) << "\n";
 
     return 0;
 }
