@@ -325,6 +325,52 @@ Node *reverseLL(Node *head){
     return curr;
 }
 
+Node *reverseGroupsSLL(Node *head,int k){
+    // !T(N) = O(N)
+    // !S(N) = O(1)
+
+    if(!head)
+        return NULL;
+    int count = 0;
+    Node *revHead = NULL,*revTail = NULL,*tempTail = NULL,*curr = NULL,*prev = NULL;
+
+    while(head){
+        if(count == k){
+            if(!revHead && !revTail){
+                // first chain
+                revHead = curr;
+                revTail = tempTail;
+            }
+            else{
+                // linking the reversed chain
+                revTail->next = curr;
+                revTail = tempTail;
+            }
+            curr = NULL;tempTail = NULL;prev = NULL;count = 0;
+        }
+        // reversing the linked list
+        curr = head;
+        head = head->next;
+        curr->next = prev;
+        prev = curr;
+        if(!tempTail)
+            tempTail = prev;
+        count++;
+    }
+    // again checking for linking or first chain
+    if(!revHead && !revTail){
+        // first chain
+        revHead = curr;
+        revTail = tempTail;
+    }
+    else{
+        // linking the reversed chain
+        revTail->next = curr;
+        revTail = tempTail;
+    }
+    return revHead;
+}
+
 Node *removeDuplicatesFromSortedLL(Node *h){
     // !T(N) = O(N)
     // !S(N) = O(1)
@@ -356,14 +402,13 @@ int main(){
     
     // we need to allocate the struct in heap , dynamic allocation
     Node *head = insertBegin(NULL,30);
-    head = insertBegin(head,30);
-    head = insertBegin(head,30);
-    head = insertBegin(head,20);
     head = insertBegin(head,20);
     head = insertBegin(head,10);
     printSLL(head);
-
     head = removeDuplicatesFromSortedLL(head);
+    printSLL(head);
+
+    head = reverseGroupsSLL(head,4);
     printSLL(head);
 
     return 0;
