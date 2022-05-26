@@ -395,21 +395,194 @@ Node *removeDuplicatesFromSortedLL(Node *h){
     return h;
 }
 
+bool isLoopLL(Node *head){
+    // ! Floyd Detection Mechanism
+    // detect whether there is loop or not in the linked list 
+    if(!head || !head->next)
+        return false;
+    Node *fast = head,*slow = head;
+    while(fast && fast->next){
+        fast = fast->next->next;
+        slow = slow->next;
+        if(fast == slow)
+            return true;
+    }
+    return false;
+}
+
+void printCLL(Node *head){
+    if(!head)
+        return;
+    Node *curr = head;
+    do{
+        cout << curr->data << " ";
+        curr = curr->next;
+    }while(curr != head);
+}
+
+Node *insertTailCircularLL(Node *head,int data){
+    Node *temp = new Node(data);
+    if(!head){
+        temp->next = temp;
+        return temp;
+    }
+    Node *curr = head;
+    while(curr->next != head){
+        curr = curr->next;
+    }
+    curr->next = temp;
+    temp->next = head;
+    return head;
+}
+
+void removeCycle(Node *head,Node *meet){
+    // @param head : pointer to the head of the linked list
+    // @param meet : pointer where the slow and fast meet in floyd detection algo
+
+    if(meet == head){
+        // we have detected a circular linked list
+        while(meet->next != head){
+            meet = meet->next;
+        }
+    }
+    else{
+        while(head->next != meet->next){
+            head = head->next;
+            meet = meet->next;
+        }
+    }
+    // after the loop , meet will be the tail of the linked list
+    // ! removing the cycle 
+    meet->next = NULL;
+}
+void detectAndRemoveCycle(Node *head){
+    // !T(N) = O(N) -> cycle length + linear length
+    // !S(N) = O(N)
+    // @param head : pointer to the head of the linked list
+    Node *slow = head, *fast = head;
+    while(fast && fast->next){
+        slow = slow->next;
+        fast = fast->next->next;
+        if(fast == slow){
+            // !cycle exists
+            slow = head;
+            removeCycle(slow,fast);
+            return;
+        }
+    }
+}
+
+void deleteNodeOfGivenRef(Node *x){
+    // ! Reference of the last will not be given
+    // !T(N) = O(1)
+    // !S(N) = O(1)
+    // @param x: pointer to the given node 
+    Node *temp = x;
+    // TODO : copy the data of the next node to current reference
+    x->data = temp->data;
+    x->next = temp->next;
+    delete temp;
+}
+
+Node *segregateEvenAndOddLL(Node *head){
+    // !T(N) = O(N)
+    // !T(N) = O(1)
+    // ! the odd and even should be in the same order as in the given ll
+    // even data nodes on the left and odd data nodes on the right
+    Node *evenHead = NULL,*evenTail = NULL,*oddHead = NULL,*oddTail = NULL,*curr = head;
+    while(curr){
+        if((curr->data&1) == 0){
+            //even
+            if(!evenHead){
+                // first node 
+                evenHead = evenTail = curr;
+                curr = curr->next;
+                evenTail->next = NULL;
+            }
+            else{
+                evenTail->next = curr;
+                curr = curr->next;
+                evenTail = evenTail->next;
+                evenTail->next = NULL;
+            }
+        }
+        else{
+            // odd
+            if(!oddHead){
+                oddHead = oddTail = curr;
+                curr=curr->next;
+                oddTail->next = NULL;
+            }
+            else{
+                oddTail->next = curr;
+                curr = curr->next;
+                oddTail = oddTail->next;
+                oddTail->next = NULL;
+            }
+        }
+    }
+    cout << "Even Linked List : ";
+    printSLL(evenHead);
+    cout << "Odd Linked List : ";
+    printSLL(oddHead);
+    // joining the two seperate linked lists
+    if(!evenTail){
+        // no even data nodes in the LL
+        evenHead = oddHead;
+    }
+    else{
+        evenTail->next = oddHead;
+    }
+    return evenHead;
+}
+
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     
     // we need to allocate the struct in heap , dynamic allocation
-    Node *head = insertBegin(NULL,30);
-    head = insertBegin(head,20);
-    head = insertBegin(head,10);
-    printSLL(head);
-    head = removeDuplicatesFromSortedLL(head);
-    printSLL(head);
+    // Node *head = insertBegin(NULL,30);
+    // head = insertBegin(head,20);
+    // head = insertBegin(head,10);
+    // printSLL(head);
+    // head = removeDuplicatesFromSortedLL(head);
+    // printSLL(head);
 
-    head = reverseGroupsSLL(head,4);
-    printSLL(head);
+    // head = reverseGroupsSLL(head,4);
+    // printSLL(head);
+    // bool t = true,f= false;
+    // deb2(t,f);
+    // cout << isLoopLL(head) <<"\n";
+    
+    // // circular linked list 
+    // Node *head1 = insertTailCircularLL(NULL,10);
+    // head1 = insertTailCircularLL(head1,20);
+    // head1 = insertTailCircularLL(head1,30);
+    // head1 = insertTailCircularLL(head1,40);
+    // printCLL(head1);
+    // deb2(t,f);
+    // cout << isLoopLL(head1) <<"\n";
 
+    // // * for loop detection and removal
+    // Node *head2 = insertBegin(NULL,30);
+    // Node *temp =head2;
+    // head2 = insertBegin(head2,20);
+    // head2 = insertBegin(head2,10);
+    // temp->next = head2;
+
+    // detectAndRemoveCycle(head2);
+    // printSLL(head2);
+
+    // * for segregating even and odd nodes wrt to data in the nodes
+    Node *head3 = insertBegin(NULL,60);
+    head3 = insertBegin(head3,51);
+    head3 = insertBegin(head3,40);
+    head3 = insertBegin(head3,31);
+    head3 = insertBegin(head3,20);
+    head3 = insertBegin(head3,11);
+    printSLL(head3);
+    head3 = segregateEvenAndOddLL(head3);
+    printSLL(head3);
     return 0;
 }
