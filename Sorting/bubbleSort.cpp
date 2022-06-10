@@ -53,6 +53,7 @@ int main(){
 }
 
 void bubbleSort(ll *nums,ll n){
+    // Optimized bubble sort algo
     FOR(i,n-1){
         bool isSwapped = false;
         FOR(j,n-i-1){

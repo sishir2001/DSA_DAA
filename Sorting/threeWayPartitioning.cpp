@@ -57,7 +57,7 @@ int main(){
 
 ll shiftPivotToEnd(ll *nums,ll n,ll p){
     // shifting all the elements equal to partition to the right end 
-    // modigying the hoare's partition
+    // modifying the hoare's partition
     ll l = -1,r = n;
     while(true){
         do{
