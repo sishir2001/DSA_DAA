@@ -48,6 +48,8 @@ void postorder_traversal(Node *root);
 void levelorder_traversal(Node *root);
 int height_of_tree(Node *root);
 p_int diameter_tree(Node *root);
+void print_all_paths_to_leaf(Node *root,v_ll &path);
+void print_vector(v_ll &nums);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -66,6 +68,8 @@ int main() {
         Node *root = levelorder_build(nums);
         p_int res = diameter_tree(root);
         deb2(res.first, res.second);
+        v_ll path;
+        print_all_paths_to_leaf(root,path);
         nums.clear();
         T--;
     }
@@ -195,4 +199,31 @@ p_int diameter_tree(Node *root) {
     p.first = d;
     p.second = h + 1;
     return p;
+}
+
+void print_all_paths_to_leaf(Node *root,v_ll &path){
+    // !T(N) = O(N)
+    // !S(N) = O(H)
+    if(!root)
+        return;
+    if(!root->left && !root->right){
+        // leaf node 
+        path.PB(root->data);
+        // print the vector
+        print_vector(path);
+        path.PPB();
+        return;
+    }
+    path.PB(root->data);
+    print_all_paths_to_leaf(root->left,path);
+    print_all_paths_to_leaf(root->right,path);
+    path.PPB();
+    return ;
+}
+
+void print_vector(v_ll &nums) {
+    for (auto i : nums) {
+        cout << i << " ";
+    }
+    NXT_LINE;
 }
