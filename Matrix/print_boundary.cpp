@@ -38,10 +38,7 @@ typedef pair<uint, uint> p_uint;
          (a)--)  // regular for loop decreasing
 
 void print_matrix(vector<v_ll> &matrix);
-void rotate_90_clockwise(vector<v_ll> &matrix);
-void rotate_90_anticlockwise(vector<v_ll> &matrix);
-void rev_cols(vector<v_ll> &matrix);
-void transpose(vector<v_ll> &matrix);
+void boundary_print(vector<v_ll> &matrix);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -51,21 +48,17 @@ int main() {
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    // ! Inplace rotation of the matrix
-    ll n, T;
+    ll T, n, m;
     cin >> T;
     while (T) {
-        cin >> n;
+        cin >> n >> m;
         // n rows and m cols
-        vector<v_ll> matrix(n, v_ll(n, 0));  // 2d matrix
+        vector<v_ll> matrix(n, v_ll(m, 0));  // 2d matrix
         FOR(i, n, 0) {
-            FOR(j, n, 0) { cin >> matrix[i][j]; }
+            FOR(j, m, 0) { cin >> matrix[i][j]; }
         }
-        rotate_90_clockwise(matrix);
-        print_matrix(matrix);
+        boundary_print(matrix);
         NXT_LINE;
-        rotate_90_anticlockwise(matrix);
-        print_matrix(matrix);
         matrix.clear();
         T--;
     }
@@ -73,44 +66,33 @@ int main() {
 }
 
 void print_matrix(vector<v_ll> &matrix) {
-    ll n = matrix.size();
+    ll n = matrix.size(), m = matrix[0].size();
     FOR(i, n, 0) {
-        FOR(j, n, 0) { cout << matrix[i][j] << " "; }
+        FOR(j, m, 0) { cout << matrix[i][j] << " "; }
         NXT_LINE;
     }
 }
 
-void rotate_90_clockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : revcols->transpose
-    rev_cols(matrix);
-    transpose(matrix);
-}
-
-void rotate_90_anticlockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : transpose -> revcols
-    transpose(matrix);
-    rev_cols(matrix);
-}
-
-void rev_cols(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        ll l = 0, r = n - 1;
-        while (l < r) {
-            swap(matrix[l][i], matrix[r][i]);
-            l++;
-            r--;
+void boundary_print(vector<v_ll> &matrix) {
+    ll n = matrix.size(), m = matrix[0].size();
+    int i = 0, j = 0;
+    for (; j < m; j++) {
+        cout << matrix[i][j] << " ";
+    }
+    j = m - 1;
+    for (i = 1; i < n; i++) {
+        cout << matrix[i][j] << " ";
+    }
+    i = n - 1;
+    if (i != 0) {
+        for (j = m - 2; j >= 0; j--) {
+            cout << matrix[i][j] << " ";
         }
     }
-}
-
-void transpose(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        FOR(j, n, i + 1) { swap(matrix[i][j], matrix[j][i]); }
+    j = 0;
+    if (m - 1 != 0) {
+        for (i = n - 2; i >= 1; i--) {
+            cout << matrix[i][j] << " ";
+        }
     }
 }

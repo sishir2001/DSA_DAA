@@ -38,10 +38,7 @@ typedef pair<uint, uint> p_uint;
          (a)--)  // regular for loop decreasing
 
 void print_matrix(vector<v_ll> &matrix);
-void rotate_90_clockwise(vector<v_ll> &matrix);
-void rotate_90_anticlockwise(vector<v_ll> &matrix);
-void rev_cols(vector<v_ll> &matrix);
-void transpose(vector<v_ll> &matrix);
+void rotate_array_90_anti(vector<v_ll> &matrix);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -51,8 +48,7 @@ int main() {
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    // ! Inplace rotation of the matrix
-    ll n, T;
+    ll T, n;
     cin >> T;
     while (T) {
         cin >> n;
@@ -61,10 +57,7 @@ int main() {
         FOR(i, n, 0) {
             FOR(j, n, 0) { cin >> matrix[i][j]; }
         }
-        rotate_90_clockwise(matrix);
-        print_matrix(matrix);
-        NXT_LINE;
-        rotate_90_anticlockwise(matrix);
+        rotate_array_90_anti(matrix);
         print_matrix(matrix);
         matrix.clear();
         T--;
@@ -73,44 +66,29 @@ int main() {
 }
 
 void print_matrix(vector<v_ll> &matrix) {
-    ll n = matrix.size();
+    ll n = matrix.size(), m = matrix[0].size();
     FOR(i, n, 0) {
-        FOR(j, n, 0) { cout << matrix[i][j] << " "; }
+        FOR(j, m, 0) { cout << matrix[i][j] << " "; }
         NXT_LINE;
     }
 }
 
-void rotate_90_clockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : revcols->transpose
-    rev_cols(matrix);
-    transpose(matrix);
-}
+void rotate_array_90_anti(vector<v_ll> &matrix) {
+    ll l = 0, r = matrix.size() - 1;
+    while (l < r) {
+        for (ll j = r; j > l; j--) {
+            ll ni = r - j + l, nj = l;
+            swap(matrix[ni][nj], matrix[l][j]);
 
-void rotate_90_anticlockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : transpose -> revcols
-    transpose(matrix);
-    rev_cols(matrix);
-}
+            nj = ni;
+            ni = r;
+            swap(matrix[ni][nj], matrix[l][j]);
 
-void rev_cols(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        ll l = 0, r = n - 1;
-        while (l < r) {
-            swap(matrix[l][i], matrix[r][i]);
-            l++;
-            r--;
+            ni = r - nj + l;
+            nj = r;
+            swap(matrix[ni][nj], matrix[l][j]);
         }
-    }
-}
-
-void transpose(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        FOR(j, n, i + 1) { swap(matrix[i][j], matrix[j][i]); }
+        l++;
+        r--;
     }
 }

@@ -37,12 +37,6 @@ typedef pair<uint, uint> p_uint;
     for (int(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
-void print_matrix(vector<v_ll> &matrix);
-void rotate_90_clockwise(vector<v_ll> &matrix);
-void rotate_90_anticlockwise(vector<v_ll> &matrix);
-void rev_cols(vector<v_ll> &matrix);
-void transpose(vector<v_ll> &matrix);
-
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
@@ -51,66 +45,21 @@ int main() {
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    // ! Inplace rotation of the matrix
-    ll n, T;
+    int T, n;
     cin >> T;
     while (T) {
         cin >> n;
-        // n rows and m cols
-        vector<v_ll> matrix(n, v_ll(n, 0));  // 2d matrix
-        FOR(i, n, 0) {
-            FOR(j, n, 0) { cin >> matrix[i][j]; }
+        v_int nums(n);  // vector
+        FOR(i, n, 0) { cin >> nums[i]; }
+        priority_queue<int, v_int, greater<int>> heap;  // by default max heap
+        FOR(i, n, 0) { heap.push(nums[i]); }
+        // printing the heap
+        while (!heap.empty()) {
+            cout << heap.top() << " ";
+            heap.pop();
         }
-        rotate_90_clockwise(matrix);
-        print_matrix(matrix);
-        NXT_LINE;
-        rotate_90_anticlockwise(matrix);
-        print_matrix(matrix);
-        matrix.clear();
+        nums.clear();
         T--;
     }
     return 0;
-}
-
-void print_matrix(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        FOR(j, n, 0) { cout << matrix[i][j] << " "; }
-        NXT_LINE;
-    }
-}
-
-void rotate_90_clockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : revcols->transpose
-    rev_cols(matrix);
-    transpose(matrix);
-}
-
-void rotate_90_anticlockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : transpose -> revcols
-    transpose(matrix);
-    rev_cols(matrix);
-}
-
-void rev_cols(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        ll l = 0, r = n - 1;
-        while (l < r) {
-            swap(matrix[l][i], matrix[r][i]);
-            l++;
-            r--;
-        }
-    }
-}
-
-void transpose(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        FOR(j, n, i + 1) { swap(matrix[i][j], matrix[j][i]); }
-    }
 }

@@ -38,10 +38,8 @@ typedef pair<uint, uint> p_uint;
          (a)--)  // regular for loop decreasing
 
 void print_matrix(vector<v_ll> &matrix);
-void rotate_90_clockwise(vector<v_ll> &matrix);
-void rotate_90_anticlockwise(vector<v_ll> &matrix);
-void rev_cols(vector<v_ll> &matrix);
-void transpose(vector<v_ll> &matrix);
+ll magnetic_field(vector<v_ll> &matrix);
+ll diagnol_sum(vector<v_ll> &matrix, ll i, ll j, ll n);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -51,8 +49,7 @@ int main() {
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    // ! Inplace rotation of the matrix
-    ll n, T;
+    ll T, n;
     cin >> T;
     while (T) {
         cin >> n;
@@ -61,11 +58,8 @@ int main() {
         FOR(i, n, 0) {
             FOR(j, n, 0) { cin >> matrix[i][j]; }
         }
-        rotate_90_clockwise(matrix);
-        print_matrix(matrix);
-        NXT_LINE;
-        rotate_90_anticlockwise(matrix);
-        print_matrix(matrix);
+        ll res = magnetic_field(matrix);
+        cout << res << "\n";
         matrix.clear();
         T--;
     }
@@ -73,44 +67,63 @@ int main() {
 }
 
 void print_matrix(vector<v_ll> &matrix) {
-    ll n = matrix.size();
+    ll n = matrix.size(), m = matrix[0].size();
     FOR(i, n, 0) {
-        FOR(j, n, 0) { cout << matrix[i][j] << " "; }
+        FOR(j, m, 0) { cout << matrix[i][j] << " "; }
         NXT_LINE;
     }
 }
 
-void rotate_90_clockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : revcols->transpose
-    rev_cols(matrix);
-    transpose(matrix);
-}
-
-void rotate_90_anticlockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : transpose -> revcols
-    transpose(matrix);
-    rev_cols(matrix);
-}
-
-void rev_cols(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        ll l = 0, r = n - 1;
-        while (l < r) {
-            swap(matrix[l][i], matrix[r][i]);
-            l++;
-            r--;
+ll magnetic_field(vector<v_ll> &matrix) {
+    ll n = matrix.size(), mx = 0;
+    for (ll i = 0; i < n; i++) {
+        for (ll j = 0; j < n; j++) {
+            ll row_sum = 0, cols_sum = 0,
+               diag_sum = diagnol_sum(matrix, i, j, n);
+            for (int a = 0; a < n; a++) {
+                // row sum
+                if (a == i)
+                    continue;
+                row_sum += matrix[a][j];
+            }
+            for (int a = 0; a < n; a++) {
+                // row sum
+                if (a == j)
+                    continue;
+                cols_sum += matrix[i][a];
+            }
+            ll tot_sum = row_sum + cols_sum + diag_sum + matrix[i][j];
+            mx = max(tot_sum, mx);
         }
     }
+    return mx;
 }
 
-void transpose(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        FOR(j, n, i + 1) { swap(matrix[i][j], matrix[j][i]); }
+ll diagnol_sum(vector<v_ll> &matrix, ll i, ll j, ll n) {
+    ll left_sum = 0, right_sum = 0, a = i - 1, b = j - 1;
+    while (a >= 0 && b >= 0) {
+        left_sum += matrix[a][b];
+        a--;
+        b--;
     }
+    a = i + 1;
+    b = j + 1;
+    while (a < n && b < n) {
+        left_sum += matrix[a][b];
+        a++;
+        b++;
+    }
+    a = i - 1, b = j + 1;
+    while (a >= 0 && j < n) {
+        right_sum += matrix[a][b];
+        a--;
+        b++;
+    }
+    a = i + 1, b = j - 1;
+    while (j >= 0 && a < n) {
+        right_sum += matrix[a][b];
+        b--;
+        a++;
+    }
+    return left_sum + right_sum;
 }

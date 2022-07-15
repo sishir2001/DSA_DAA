@@ -38,10 +38,7 @@ typedef pair<uint, uint> p_uint;
          (a)--)  // regular for loop decreasing
 
 void print_matrix(vector<v_ll> &matrix);
-void rotate_90_clockwise(vector<v_ll> &matrix);
-void rotate_90_anticlockwise(vector<v_ll> &matrix);
-void rev_cols(vector<v_ll> &matrix);
-void transpose(vector<v_ll> &matrix);
+ll median(vector<v_ll> &matrix);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -51,21 +48,17 @@ int main() {
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    // ! Inplace rotation of the matrix
-    ll n, T;
+    ll T, n, m;
     cin >> T;
     while (T) {
-        cin >> n;
+        cin >> n >> m;
         // n rows and m cols
-        vector<v_ll> matrix(n, v_ll(n, 0));  // 2d matrix
+        vector<v_ll> matrix(n, v_ll(m, 0));  // 2d matrix
         FOR(i, n, 0) {
-            FOR(j, n, 0) { cin >> matrix[i][j]; }
+            FOR(j, m, 0) { cin >> matrix[i][j]; }
         }
-        rotate_90_clockwise(matrix);
-        print_matrix(matrix);
-        NXT_LINE;
-        rotate_90_anticlockwise(matrix);
-        print_matrix(matrix);
+        ll med = median(matrix);
+        deb(med);
         matrix.clear();
         T--;
     }
@@ -73,44 +66,36 @@ int main() {
 }
 
 void print_matrix(vector<v_ll> &matrix) {
-    ll n = matrix.size();
+    ll n = matrix.size(), m = matrix[0].size();
     FOR(i, n, 0) {
-        FOR(j, n, 0) { cout << matrix[i][j] << " "; }
+        FOR(j, m, 0) { cout << matrix[i][j] << " "; }
         NXT_LINE;
     }
 }
 
-void rotate_90_clockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : revcols->transpose
-    rev_cols(matrix);
-    transpose(matrix);
-}
-
-void rotate_90_anticlockwise(vector<v_ll> &matrix) {
-    // * inplace
-    // !T(N) = O(N^2)
-    // clockwise : transpose -> revcols
-    transpose(matrix);
-    rev_cols(matrix);
-}
-
-void rev_cols(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        ll l = 0, r = n - 1;
-        while (l < r) {
-            swap(matrix[l][i], matrix[r][i]);
-            l++;
-            r--;
+ll median(vector<v_ll> &matrix) {
+    // !T(N) = O(r*log(mx-mn)*logc)
+    ll r = matrix.size(), c = matrix[0].size();
+    ll mn = matrix[0][c - 1], mx = matrix[0][0];
+    FOR(i, r, 1) {
+        mx = max(mx, matrix[i][c - 1]);
+        mn = min(mn, matrix[i][0]);
+    }
+    deb2(mn, mx);
+    ll med_pos = (r * c + 1) / 2;
+    deb(med_pos);
+    while (mn < mx) {
+        ll mid = (mx + mn) / 2, mid_pos = 0;
+        // finding the elements less mid in the
+        FOR(i, r, 0) {
+            mid_pos += upper_bound(matrix[i].begin(), matrix[i].end(), mid) -
+                       matrix[i].begin();
         }
-    }
-}
 
-void transpose(vector<v_ll> &matrix) {
-    ll n = matrix.size();
-    FOR(i, n, 0) {
-        FOR(j, n, i + 1) { swap(matrix[i][j], matrix[j][i]); }
+        if (mid_pos < med_pos)
+            mn = mid + 1;
+        else
+            mx = mid;
     }
+    return mn;
 }
