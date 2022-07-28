@@ -32,9 +32,9 @@ typedef pair<uint, uint> p_uint;
     cout << #x << " = " << x << " , " << #y << " = " << y \
          << "\n"  // for debugging
 #define FOR(a, end, start) \
-    for (int(a) = (start); (a) < (end); (a)++)  // regular for loop
+    for (ll(a) = (start); (a) < (end); (a)++)  // regular for loop
 #define FOR_REV(a, end, start)             \
-    for (int(a) = (end)-1; (a) >= (start); \
+    for (ll(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
 ll longest_common_subarray_with_samesum(v_ll nums1, v_ll nums2);
@@ -68,6 +68,21 @@ int main() {
 ll longest_common_subarray_with_samesum(v_ll nums1, v_ll nums2) {
     // !T(N) = O(N)
     // !S(N) = O(N)
+    // !subtract the arrays
+    map<ll,ll> m; // value : index
+    ll sum = 0,mx = 0,n = nums1.size();
+    m[0] = 0;
+    FOR(i, n, 0) { 
+        nums1[i] = nums1[i] - nums2[i];
+        sum += nums1[i];
+        if(m.find(sum) == m.end()){
+            m[sum] = i+1;
+        }
+        else{
+            mx = max(mx,i+1-m[sum]);
+        }
+    }
+    return mx;
 }
 
 ll longest_common_subarray_with_samesum_brute(v_ll &nums1, v_ll &nums2) {

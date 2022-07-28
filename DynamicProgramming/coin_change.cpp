@@ -38,6 +38,7 @@ typedef pair<uint, uint> p_uint;
 
 ll coin_change(v_ll &coins, ll m, map<ll, ll> &h);
 ll coin_change_itr(v_ll &coins, ll m);
+ll coin_change_recr(v_ll &coins, ll m);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -53,10 +54,13 @@ int main() {
         cin >> n >> m;
         v_ll nums(n);  // vector
         FOR(i, n, 0) { cin >> nums[i]; }
+        deb(m);
         map<ll, ll> h;
         ll res = coin_change(nums, m, h);
         ll res_itr = coin_change_itr(nums, m);
+        // ll res_recr = coin_change_recr(nums, m);
         deb2(res, res_itr);
+        // deb(res_recr);
         nums.clear();
         T--;
     }
@@ -78,6 +82,21 @@ ll coin_change(v_ll &coins, ll m, map<ll, ll> &h) {
             mn = min(mn, h[m - coins[i]]);
     }
     return mn == LLONG_MAX ? -1 : mn + 1;
+}
+
+ll coin_change_recr(v_ll &coins, ll m) {
+    if (m < 0)
+        return -1;
+    if (m == 0)
+        return 0;
+    ll mn = LLONG_MAX;
+    FOR(i, coins.size(), 0) {
+        deb2(m, coins[i]);
+        ll temp = coin_change_recr(coins, m - coins[i]);
+        if (temp != -1)
+            mn = min(mn, temp);
+    }
+    return mn == LLONG_MIN ? -1 : mn + 1;
 }
 
 ll coin_change_itr(v_ll &coins, ll m) {

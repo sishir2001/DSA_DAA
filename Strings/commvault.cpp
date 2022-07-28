@@ -32,11 +32,12 @@ typedef pair<uint, uint> p_uint;
     cout << #x << " = " << x << " , " << #y << " = " << y \
          << "\n"  // for debugging
 #define FOR(a, end, start) \
-    for (ll(a) = (start); (a) < (end); (a)++)  // regular for loop
-#define FOR_REV(a, end, start) \
-    for (ll(a) = (end)-1; (a) >= (start); (a)--)  // regular for loop decreasing
+    for (int(a) = (start); (a) < (end); (a)++)  // regular for loop
+#define FOR_REV(a, end, start)             \
+    for (int(a) = (end)-1; (a) >= (start); \
+         (a)--)  // regular for loop decreasing
 
-ll lis(v_ll &nums);
+int max_length(string &s1, string &s2);
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -46,34 +47,37 @@ int main() {
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    ll T, n;
+    int T;
     cin >> T;
     while (T) {
-        cin >> n;
-        v_ll nums(n);  // vector
-        FOR(i, n, 0) { cin >> nums[i]; }
-        ll res = lis(nums);
+        string s1, s2;
+        cin >> s1 >> s2;
+        int res = max_length(s1, s2);
         deb(res);
-        nums.clear();
         T--;
     }
     return 0;
 }
 
-ll lis(v_ll &nums) {
-    // !T(N) = O(N^2)
-    ll n = nums.size();
-    v_ll dp(n, 0);
-    ll mx = 0;
-    FOR(i, n, 0) {
-        ll sub_mx = 0;
-        FOR(j, i, 0) {
-            if (nums[j] < nums[i]) {
-                sub_mx = max(sub_mx, dp[j]);
+int max_length(string &s1, string &s2) {
+    int mx = 0, i = 0;
+    while (i < s1.length()) {
+        int count = 0, j = 0, k = i;
+        while (j < s2.length()) {
+            char x = s1[k],y = s2[j];
+            if (s1[k] == s2[j]) {
+                count++;
+                k++;
             }
+            else{
+                mx = max(mx,count);
+                count = 0;
+                k = i;
+            }
+            j++;
         }
-        dp[i] = sub_mx + 1;
-        mx = max(mx, dp[i]);
+        mx = max(mx, count);
+        i++;
     }
     return mx;
 }
