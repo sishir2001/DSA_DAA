@@ -86,6 +86,9 @@ ll longest_common_subarray_with_samesum(v_ll nums1, v_ll nums2) {
 }
 
 ll longest_common_subarray_with_samesum_brute(v_ll &nums1, v_ll &nums2) {
+    // ! T(N) = O(N^2)
+    // ! S(N) = O(1)
+
     ll n = nums1.size(), mx = 0;
     for (ll i = 0; i < n; i++) {
         ll sum1 = 0, sum2 = 0;
