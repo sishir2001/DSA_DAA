@@ -30,23 +30,20 @@ typedef pair<uint, uint> p_uint;
 #define PPB      pop_back                          // for vector
 #define mod      1000000007                        // 1e9+7
 #define deb(x)   cout << #x << " = " << x << "\n"  // for debugging
-#define deb2(x, y)                                        \
-    cout << #x << " = " << x << " , " << #y << " = " << y \
-         << "\n"  // for debugging
-#define FOR(a, end, start) \
-    for (int(a) = (start); (a) < (end); (a)++)  // regular for loop
-#define FOR_REV(a, end, start)             \
-    for (int(a) = (end)-1; (a) >= (start); \
-         (a)--)  // regular for loop decreasing
+#define deb2(x, y)cout << #x << " = " << x << " , " << #y << " = " << y<< "\n"  // for debugging
+#define FOR(a, end, start) for (int(a) = (start); (a) < (end); (a)++)  // regular for loop
+#define FOR_REV(a, end, start) for (int(a) = (end)-1; (a) >= (start);(a)--)  // regular for loop decreasing
 
 int main() {
+
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-#ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-#endif
+
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt","r",stdin);
+      freopen("output.txt","w",stdout);
+    #endif
 
     List *l = new List();
     l->push_front(1);
