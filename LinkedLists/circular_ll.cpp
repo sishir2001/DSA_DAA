@@ -57,7 +57,7 @@ class List {
     }
     List(int data) {
         this->head = new Node(data);
-        this->head->next = this->head;
+        this->head->next = NULL;
     }
 
     ~List() {
@@ -66,7 +66,7 @@ class List {
         this->head = NULL;
     }
 
-    void push_back(int data){
+    void push_back_naive(int data){
     	// !T(N) = O(N)
     	// !S(N) = O(1)
     	Node *t = new Node(data);
@@ -87,7 +87,24 @@ class List {
     	return;
     }
 
-    void pop_front(){
+    void push_back(int data){
+        // !T(N) = O(1)
+        // !S(N) = O(1)
+        Node *t = new Node(data);
+        if(!this->head){
+            this->head = t;
+            this->head->next = this->head;
+            t = NULL;
+            return;
+        }
+        t->next = this->head->next;
+        this->head->next = t;
+        swap(this->head->data,t->data);
+        swap(this->head,t);
+        return;
+    }
+
+    void pop_front_naive(){
     	// !T(N) = O(N)
     	// !S(N) = O(1)
     	if(!this->head)
@@ -112,7 +129,28 @@ class List {
     	return;
     }
 
-    void push_front(int data){
+    void pop_front(){
+        // !T(N) = O(1)
+        // !T(N) = O(1)
+        if(!this->head)
+            return;
+        if(this->head->next == this->head){
+            // single node present
+            this->head->next = NULL;
+            delete this->head;
+            this->head = NULL;
+            return;
+        }
+        Node *t = this->head->next;
+        swap(t->data,this->head->data);
+        this->head->next = t->next;
+        t->next = NULL;
+        delete t;
+        t = NULL;
+        return;
+    }
+
+    void push_front_naive(int data){
     	// !T(N) = O(N)
     	// !S(N) = O(1)
     	Node *t = new Node(data);
@@ -131,6 +169,25 @@ class List {
     	this->head = t;
     	t = NULL;
     	return;
+    }
+    
+
+    void push_front(int data){
+        // !T(N) = O(1)
+        // !S(N) = O(1)
+
+        Node *t = new Node(data);
+        if(!this->head){
+            // create a node
+            this->head = t;
+            this->head->next = this->head;
+            t = NULL;
+            return;
+        }
+        t->next = this->head->next;
+        this->head->next = t;
+        swap(this->head->data,t->data);
+        return;
     }
 
     void pop_back(){
@@ -205,7 +262,7 @@ int main(){
     	l->push_back(3);
     	l->push_front(0);
     	l->print_cll();
-    	l->remove(1);
+        l->pop_front();
     	l->print_cll();
         T--;
     }
