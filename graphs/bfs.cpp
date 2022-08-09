@@ -37,18 +37,24 @@ typedef pair<uint, uint> p_uint;
     for (int(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
-void add_edge(v_int adj[], int i, int j);
-void print_graph(v_int adj[], int v);
-void bfs_source(v_int adj[], int source);
-void bfs(v_int adj[], vector<bool> &visited, int v, int source);
-void bfs_disconnected(v_int adj[], int v);
+void add_edge(vector<v_int> &adj, int i, int j);
+void remove_edge(vector<v_int> &adj, int i, int j);
+void print_graph(vector<v_int> &adj, int v);
+void bfs_source(vector<v_int> &adj, int s);
+void bfs(vector<v_int> &adj,vector<bool> &visited,int s);
+void bfs_disconnected(vector<v_int> &adj);
 
 int main() {
+    // !Well suited for sparse graphs
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt","r",stdin);
+      freopen("output.txt","w",stdout);
+    #endif
     int v = 7;
-    v_int adj[v];
+    vector<v_int> adj(v);
     add_edge(adj, 0, 1);
     add_edge(adj, 0, 2);
     add_edge(adj, 1, 3);
@@ -57,15 +63,18 @@ int main() {
     add_edge(adj, 4, 6);
     add_edge(adj, 5, 6);
     print_graph(adj, v);
-    bfs_disconnected(adj, v);
+    NXT_LINE;
+
+    bfs_disconnected(adj);
     return 0;
 }
 
-void add_edge(v_int adj[], int i, int j) {
+void add_edge(vector<v_int> &adj, int i, int j){
     adj[i].PB(j);
     adj[j].PB(i);
 }
-void print_graph(v_int adj[], int v) {
+
+void print_graph(vector<v_int> &adj, int v){
     FOR(i, v, 0) {
         cout << i << " : ";
         for (int j = 0; j < adj[i].size(); j++) {
@@ -75,44 +84,79 @@ void print_graph(v_int adj[], int v) {
     }
 }
 
-void bfs_source(v_int adj[], int source) {
-    unordered_set<int> s;  // for maintaining visited and in queue nodes
-    queue<int> q;
-    s.insert(source);
-    q.push(source);
-    while (!q.empty()) {
-        int curr = q.front();
-        q.pop();
-        cout << curr << " ";
-        for (auto i : adj[curr]) {
-            if (s.find(i) == s.end()) {
-                q.push(i);
-                s.insert(i);
-            }
-        }
+void remove_edge(vector<v_int> &adj, int u, int v){
+    // using erase function to remove and edge
+    // !T(N) = O(V)
+    // !S(N) = O(1)
+    int i = 0;
+    for(;i < adj[u].size();i++){
+        if(adj[u][i] == v)
+            break;
+    }
+    if(i != adj[u].size()){
+        v_int::iterator it = adj[u].begin()+i;
+        adj[u].erase(it);
+    }
+
+    for(i = 0;i < adj[v].size();i++){
+        if(adj[v][i] == u)
+            break;
+    }
+    if(i != adj[v].size()){
+        v_int::iterator it = adj[v].begin()+i;
+        adj[v].erase(it);
     }
 }
 
-void bfs(v_int adj[], vector<bool> &visited, int v, int source) {
+void bfs_source(vector<v_int> &adj, int s){
+    // for directed graphs , connected graphs
+    int v = adj.size();
+    vector<bool> visited(v+1,false);
     queue<int> q;
-    q.push(source);
-    visited[source] = true;
-    while (!q.empty()) {
-        int curr = q.front();
-        cout << curr << " ";
+    q.push(s);
+    visited[s] = true;
+    while(!q.empty()){
+        int f = q.front();
         q.pop();
-        for (auto i : adj[curr]) {
-            if (!visited[i]) {
-                q.push(i);
-                visited[i] = true;
+        cout << f << " ";
+        FOR(i,adj[f].size(),0){
+            if(!visited[adj[f][i]]){
+                visited[adj[f][i]] = true;
+                q.push(adj[f][i]);
             }
         }
     }
+    return;
 }
-void bfs_disconnected(v_int adj[], int v) {
-    vector<bool> visited(v + 1, false);
-    for (int i = 0; i < v; i++) {
-        if (!visited[i])
-            bfs(adj, visited, v, i);
+
+void bfs(vector<v_int> &adj,vector<bool> &visited,int s){
+    // !T(N) = O(V+2E)
+    // !S(N) = O(V)
+
+    queue<int> q;
+    q.push(s);
+    visited[s] = true;
+    while(!q.empty()){
+        int f = q.front();q.pop();
+        cout << f << " ";
+        for(auto v : adj[f]){
+            if(!visited[v]){
+                visited[v] = true;
+                q.push(v);
+            }
+        }
     }
+    return;
+}
+
+void bfs_disconnected(vector<v_int> &adj){
+    // !T(N) = O(V+2E)
+    // !S(N) = O(V)
+    int v = adj.size();
+    vector<bool> visited(v,false);
+    FOR(i,v,0){
+        if(!visited[i])
+            bfs(adj,visited,i);
+    }
+    return;
 }

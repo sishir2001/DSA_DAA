@@ -254,6 +254,28 @@ class List {
     	}
     	return;
     }
+
+    void pairwise_swap(){
+        if(!this->head || !this->head->next)
+            return;
+        Node *prev = this->head,*curr = this->head->next,*swap_head = NULL,*swap_tail = NULL;
+        while(curr){
+            prev->next = curr->next;
+            curr->next = prev;
+            if(!swap_tail){
+                swap_head = curr;
+                swap_tail = prev;
+            }
+            else{
+                swap_tail->next = curr;
+                swap_tail = prev;
+            }
+            prev = prev->next;
+            curr = (prev == NULL)?NULL:prev->next;
+        }
+        this->head = swap_head;
+        return;
+    }
 };
 
 int main(){
@@ -274,9 +296,10 @@ int main(){
     	l->push_back(5);
     	l->push_back(6);
     	l->push_back(8);
-    	l->push_back(7);
+        l->push_back(8);
     	l->print_list();
-    	l->segregate_even_oddd();
+    	// l->segregate_even_oddd();
+        l->pairwise_swap();
     	l->print_list();
         T--;
     }

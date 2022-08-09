@@ -37,17 +37,26 @@ typedef pair<uint, uint> p_uint;
     for (int(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
-void add_edge(v_int adj[], int i, int j);
-void print_graph(v_int adj[], int v);
-v_int shortest_path_unweighted_bfs(v_int adj[], int v, int s);
-void print_vector(v_int &nums);
+void add_edge(vector<v_int> &adj, int i, int j);
+void remove_edge(vector<v_int> &adj, int i, int j);
+
+void print_graph(vector<v_int> &adj, int v);
+
+int shortest_path(vector<v_int> &adj,vector<bool> &visited,int s,int d);
+void shortest_path_from0_dfs(vector<v_int> &adj);
+void shortest_path_from0_bfs(vector<v_int> &adj);
 
 int main() {
+    // !Well suited for sparse graphs
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    int v = 6, s = 0;
-    v_int adj[v];
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt","r",stdin);
+      freopen("output.txt","w",stdout);
+    #endif
+    int v = 6;
+    vector<v_int> adj(v);
     add_edge(adj, 0, 1);
     add_edge(adj, 0, 2);
     add_edge(adj, 0, 4);
@@ -56,20 +65,20 @@ int main() {
     add_edge(adj, 2, 4);
     add_edge(adj, 3, 5);
     add_edge(adj, 4, 5);
-
     print_graph(adj, v);
     NXT_LINE;
-
-    v_int res_bfs = shortest_path_unweighted_bfs(adj, v, s);
-    print_vector(res_bfs);
+    shortest_path_from0_dfs(adj);
+    NXT_LINE;
+    shortest_path_from0_bfs(adj);
     return 0;
 }
 
-void add_edge(v_int adj[], int i, int j) {
+void add_edge(vector<v_int> &adj, int i, int j){
     adj[i].PB(j);
     adj[j].PB(i);
 }
-void print_graph(v_int adj[], int v) {
+
+void print_graph(vector<v_int> &adj, int v){
     FOR(i, v, 0) {
         cout << i << " : ";
         for (int j = 0; j < adj[i].size(); j++) {
@@ -79,33 +88,89 @@ void print_graph(v_int adj[], int v) {
     }
 }
 
-void print_vector(v_int &nums) {
-    for (auto i : nums) {
-        cout << i << " ";
+void remove_edge(vector<v_int> &adj, int u, int v){
+    // using erase function to remove and edge
+    // !T(N) = O(V)
+    // !S(N) = O(1)
+    int i = 0;
+    for(;i < adj[u].size();i++){
+        if(adj[u][i] == v)
+            break;
     }
-    NXT_LINE;
+    if(i != adj[u].size()){
+        v_int::iterator it = adj[u].begin()+i;
+        adj[u].erase(it);
+    }
+
+    for(i = 0;i < adj[v].size();i++){
+        if(adj[v][i] == u)
+            break;
+    }
+    if(i != adj[v].size()){
+        v_int::iterator it = adj[v].begin()+i;
+        adj[v].erase(it);
+    }
 }
 
-v_int shortest_path_unweighted_bfs(v_int adj[], int v, int s) {
-    // !T(N) = O(V+E)
-    // !S(N) = O(V)
-    v_int res(v, INT32_MAX);
-    res[s] = 0;
-    vector<bool> visited(v, false);
-    visited[s] = true;
-    queue<int> q;
-    q.push(s);
+int shortest_path(vector<v_int> &adj,vector<bool> &visited,int s,int d){
+    int mn = INT32_MAX;
+    for(auto v : adj[s]){
+        if(d == v){
+            mn = 0;
+            break;
+        }
+        if(!visited[v]){
+            visited[v] = true;
+            int res = shortest_path(adj,visited,v,d);
+            if(res != -1){
+                mn = min(mn,res);
+            }
+            visited[v] = false;
+        }
+    }
+    return mn == INT32_MAX?-1:mn+1;
+}
 
-    while (!q.empty()) {
-        int curr = q.front();
+void shortest_path_from0_dfs(vector<v_int> &adj){
+    int V = adj.size();
+    vector<bool> visited(V,false);
+    visited[0] = true;
+    cout << 0 <<" ";
+    FOR(i,V,1){
+        cout << shortest_path(adj,visited,0,i) <<" ";
+    }
+    return;
+}
+
+void shortest_path_from0_bfs(vector<v_int> &adj){
+    // T(N) = O(V+E)
+    // S(N) = O(V)
+    int V = adj.size();
+    vector<int> dist(V,0);
+    vector<bool> visited(V,false);
+
+    queue<int> q;
+    q.push(0);
+    visited[0]= true;
+    dist[0] = 0;
+
+    while(!q.empty()){
+        int s = q.front();
         q.pop();
-        for (auto i : adj[curr]) {
-            if (!visited[i]) {
-                visited[i] = true;
-                res[i] = res[curr] + 1;
-                q.push(i);
+
+        // looping through the 1dist friends
+        for(auto v : adj[s]){
+            if(!visited[v]){
+                visited[v] = true;
+                dist[v] = dist[s]+1;
+                q.push(v);
             }
         }
     }
-    return res;
+
+    // printing the result
+    for(auto i : dist){
+        cout << i << " ";
+    }
+    NXT_LINE;
 }

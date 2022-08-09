@@ -37,37 +37,43 @@ typedef pair<uint, uint> p_uint;
     for (int(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
-void add_edge(v_int adj[], int i, int j);
-void print_graph(v_int adj[], int v);
+void add_edge(vector<v_int> &adj, int i, int j);
+void remove_edge(vector<v_int> &adj, int i, int j);
+void print_graph(vector<v_int> &adj, int v);
 
-bool dfs_rec(v_int adj[], vector<bool> &visited, vector<bool> &rec_stack,
-             int s);
-bool is_loop(v_int adj[], int v);
+bool has_cycle_dfs(vector<v_int> &adj,vector<bool> &visited,int s,int p);
+void has_cycle_bfs(vector<v_int> &adj);
+bool has_cycle_bfs_helper(vector<v_int> &adj,vector<bool> &visited,int s);
+void has_cycle(vector<v_int> &adj);
 
 int main() {
+    // !Well suited for sparse graphs
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    int v = 6;
-    v_int adj[v];
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt","r",stdin);
+      freopen("output.txt","w",stdout);
+    #endif
+    int v = 5;
+    vector<v_int> adj(v);
     add_edge(adj, 0, 1);
-    add_edge(adj, 2, 1);
+    add_edge(adj, 1, 2);
+    add_edge(adj, 1, 4);
     add_edge(adj, 2, 3);
-    add_edge(adj, 5, 3);
     add_edge(adj, 3, 4);
-    add_edge(adj, 4, 5);
     print_graph(adj, v);
-
-    bool loop = is_loop(adj, v);
-    deb(loop);
+    has_cycle(adj);
+    has_cycle_bfs(adj);
     return 0;
 }
 
-void add_edge(v_int adj[], int i, int j) {
-    // directed graph
+void add_edge(vector<v_int> &adj, int i, int j){
     adj[i].PB(j);
+    adj[j].PB(i);
 }
-void print_graph(v_int adj[], int v) {
+
+void print_graph(vector<v_int> &adj, int v){
     FOR(i, v, 0) {
         cout << i << " : ";
         for (int j = 0; j < adj[i].size(); j++) {
@@ -77,25 +83,111 @@ void print_graph(v_int adj[], int v) {
     }
 }
 
-bool dfs_rec(v_int adj[], vector<bool> &visited, vector<bool> &rec_stack,
-             int s) {
-    // !T(N) = O(V+E)
-    visited[s] = true;
-    rec_stack[s] = true;
-    for (auto i : adj[s]) {
-        if (!visited[i] && dfs_rec(adj, visited, rec_stack, i))
+void remove_edge(vector<v_int> &adj, int u, int v){
+    // using erase function to remove and edge
+    // !T(N) = O(V)
+    // !S(N) = O(1)
+    int i = 0;
+    for(;i < adj[u].size();i++){
+        if(adj[u][i] == v)
+            break;
+    }
+    if(i != adj[u].size()){
+        v_int::iterator it = adj[u].begin()+i;
+        adj[u].erase(it);
+    }
+
+    for(i = 0;i < adj[v].size();i++){
+        if(adj[v][i] == u)
+            break;
+    }
+    if(i != adj[v].size()){
+        v_int::iterator it = adj[v].begin()+i;
+        adj[v].erase(it);
+    }
+}
+
+bool has_cycle_dfs(vector<v_int> &adj,vector<bool> &visited,int s,int p){
+    for(auto v : adj[s]){
+        if(v == p)
+            continue;
+        if(visited[v]){
             return true;
-        else if (rec_stack[i])
+        }
+        visited[v] = true;
+        bool res = has_cycle_dfs(adj,visited,v,s);
+        if(res)
             return true;
     }
-    rec_stack[s] = false;
     return false;
 }
-bool is_loop(v_int adj[], int v) {
-    vector<bool> visited(v, false), rec_stack(v, false);
-    FOR(i, v, 0) {
-        if (!visited[i] && dfs_rec(adj, visited, rec_stack, i))
-            return true;
+
+void has_cycle(vector<v_int> &adj){
+    int V = adj.size();
+    vector<bool> visited(V,false);
+    FOR(i,V,0){
+        if(!visited[i]){
+            visited[i] = true;
+            bool res = has_cycle_dfs(adj,visited,i,i);
+            if(res){
+                cout << "true\n";
+                return;
+            }
+        }
+    }
+    cout << "false\n";
+    return;
+}
+
+void has_cycle_bfs(vector<v_int> &adj){
+    int V = adj.size();
+    vector<bool> visited(V,false);
+    FOR(i,V,0){
+        if(!visited[i]){
+            visited[i] = true;
+            bool res = has_cycle_bfs_helper(adj,visited,i);
+            if(res){
+                cout << "true\n";
+                return;
+            }
+        }
+    }
+    cout << "false\n";
+    return;
+}
+
+bool has_cycle_bfs_helper(vector<v_int> &adj,vector<bool> &visited,int s){
+    queue<int> q,pq;
+    q.push(s);
+    q.push(-1);
+    int p = s;
+
+    while(!q.empty()){
+        int f = q.front(),count = 0;
+        q.pop();
+
+        if(f == -1){
+            if(!pq.empty()){
+                p = pq.front();pq.pop();
+            }
+            continue;
+        }
+        for(auto v : adj[f]){
+            if(v == p){
+                continue;
+            }
+            if(visited[v]){
+                return true;
+            }
+
+            visited[v] = true;
+            q.push(v);
+            count++;
+        }
+        if(count > 0){
+            q.push(-1);
+            pq.push(f);
+        }
     }
     return false;
 }

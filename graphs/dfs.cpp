@@ -37,33 +37,54 @@ typedef pair<uint, uint> p_uint;
     for (int(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
-void add_edge(v_int adj[], int i, int j);
-void print_graph(v_int adj[], int v);
-void dfs_source(v_int adj[], vector<bool> &visited, int s);
-void dfs(v_int adj[], vector<bool> &visited, int s);
-void dfs_diconnect(v_int adj[], int v);
+void add_edge(vector<v_int> &adj, int i, int j);
+void remove_edge(vector<v_int> &adj, int i, int j);
+void dfs_connected(vector<v_int> &adj,vector<bool> &visited,int s);
+void dfs(vector<v_int> &adj,vector<bool> &visited,int s);
+void dfs_disconnected(vector<v_int> &adj);
+
+void print_graph(vector<v_int> &adj, int v);
 
 int main() {
+    // !Well suited for sparse graphs
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    int v = 5;
-    v_int adj[v];
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt","r",stdin);
+      freopen("output.txt","w",stdout);
+    #endif
+    // int T,V;
+    // cin >> T;
+    // while(T){
+    //     cin >> V;
+    //     vector<v_int> adj(v);
+    //     T--;
+    // }
+    int v = 7;
+    vector<v_int> adj(v);
     add_edge(adj, 0, 1);
-    add_edge(adj, 0, 2);
+    // add_edge(adj, 0, 4);
     add_edge(adj, 1, 2);
-    add_edge(adj, 3, 4);
+    add_edge(adj, 2, 3);
+    add_edge(adj, 4, 5);
+    add_edge(adj, 4, 6);
+    add_edge(adj, 5, 6);
     print_graph(adj, v);
 
-    dfs_diconnect(adj, v);
+    // vector<bool> visited(v,false);
+    // visited[0] = true;
+    // dfs_connected(adj,visited,0);
+    dfs_disconnected(adj);
     return 0;
 }
 
-void add_edge(v_int adj[], int i, int j) {
+void add_edge(vector<v_int> &adj, int i, int j){
     adj[i].PB(j);
     adj[j].PB(i);
 }
-void print_graph(v_int adj[], int v) {
+
+void print_graph(vector<v_int> &adj, int v){
     FOR(i, v, 0) {
         cout << i << " : ";
         for (int j = 0; j < adj[i].size(); j++) {
@@ -73,31 +94,65 @@ void print_graph(v_int adj[], int v) {
     }
 }
 
-void dfs_source(v_int adj[], vector<bool> &visited, int s) {
-    // !T(N) = O(V+E)
-    // !S(N) = O(V+E)
-    visited[s] = true;
+void remove_edge(vector<v_int> &adj, int u, int v){
+    // using erase function to remove and edge
+    // !T(N) = O(V)
+    // !S(N) = O(1)
+    int i = 0;
+    for(;i < adj[u].size();i++){
+        if(adj[u][i] == v)
+            break;
+    }
+    if(i != adj[u].size()){
+        v_int::iterator it = adj[u].begin()+i;
+        adj[u].erase(it);
+    }
+
+    for(i = 0;i < adj[v].size();i++){
+        if(adj[v][i] == u)
+            break;
+    }
+    if(i != adj[v].size()){
+        v_int::iterator it = adj[v].begin()+i;
+        adj[v].erase(it);
+    }
+}
+
+void dfs_connected(vector<v_int> &adj,vector<bool> &visited,int s){
+    int n = adj.size();
+    if(s >= n)
+        return;
     cout << s << " ";
-    for (auto i : adj[s]) {
-        if (!visited[i])
-            dfs_source(adj, visited, i);
+    for(auto v : adj[s]){
+        if(!visited[v]){
+            visited[v] = true;
+            dfs_connected(adj,visited,v);
+        }
     }
     return;
 }
 
-void dfs(v_int adj[], vector<bool> &visited, int s) {
-    visited[s] = true;
+void dfs(vector<v_int> &adj,vector<bool> &visited,int s){
+    if(s >= adj.size())
+        return;
     cout << s << " ";
-    for (auto i : adj[s]) {
-        if (!visited[i])
-            dfs(adj, visited, i);
+    for(auto v : adj[s]){
+        if(!visited[v]){
+            visited[v] = true;
+            dfs(adj,visited,v);
+        }
     }
+    return;
 }
 
-void dfs_diconnect(v_int adj[], int v) {
-    vector<bool> visited(v, false);
-    FOR(i, v, 0) {
-        if (!visited[i])
-            dfs(adj, visited, i);
+void dfs_disconnected(vector<v_int> &adj){
+    int V = adj.size();
+    vector<bool> visited(V,false);
+    FOR(i,V,0){
+        if(!visited[i]){
+            visited[i] = true;
+            dfs(adj,visited,i);
+        }
     }
+    return;
 }

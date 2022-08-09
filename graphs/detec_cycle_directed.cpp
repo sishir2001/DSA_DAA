@@ -37,34 +37,42 @@ typedef pair<uint, uint> p_uint;
     for (int(a) = (end)-1; (a) >= (start); \
          (a)--)  // regular for loop decreasing
 
-void add_edge(v_int adj[], int i, int j);
-void print_graph(v_int adj[], int v);
-bool is_loop(v_int adj[], vector<bool> &visited, int s, int p);
+void add_edge(vector<v_int> &adj, int i, int j);
+void remove_edge(vector<v_int> &adj, int i, int j);
+
+void print_graph(vector<v_int> &adj, int v);
+
+bool dfs(vector<v_int> &adj,vector<bool> &rec_stack,vector<bool> &visited,int s);
+void detect_cycle_dfs(vector<v_int> &adj);
+
 
 int main() {
+    // !Well suited for sparse graphs
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
-    int v = 5;
-    v_int adj[v];
-
+    #ifndef ONLINE_JUDGE
+      freopen("input.txt","r",stdin);
+      freopen("output.txt","w",stdout);
+    #endif
+    int v = 4;
+    vector<v_int> adj(v);
     add_edge(adj, 0, 1);
     add_edge(adj, 1, 2);
-    add_edge(adj, 1, 4);
     add_edge(adj, 2, 3);
+    add_edge(adj, 3, 3);
+
     print_graph(adj, v);
 
-    vector<bool> visited(v, false);
-    bool loop = is_loop(adj, visited, 0, 0);
-    deb(loop);
+    detect_cycle_dfs(adj);
     return 0;
 }
 
-void add_edge(v_int adj[], int i, int j) {
+void add_edge(vector<v_int> &adj, int i, int j){
     adj[i].PB(j);
-    adj[j].PB(i);
 }
-void print_graph(v_int adj[], int v) {
+
+void print_graph(vector<v_int> &adj, int v){
     FOR(i, v, 0) {
         cout << i << " : ";
         for (int j = 0; j < adj[i].size(); j++) {
@@ -74,20 +82,47 @@ void print_graph(v_int adj[], int v) {
     }
 }
 
-bool is_loop(v_int adj[], vector<bool> &visited, int s, int p) {
-    // @s : current ,@p = prev
-    visited[s] = true;
-    bool res = false;
-    for (auto i : adj[s]) {
-        if (!visited[i]) {
-            res = is_loop(adj, visited, i, s);
-            if (res)
-                break;
-        } else if (i != p) {
-            res = true;
+void remove_edge(vector<v_int> &adj, int u, int v){
+    // using erase function to remove and edge
+    // !T(N) = O(V)
+    // !S(N) = O(1)
+    int i = 0;
+    for(;i < adj[u].size();i++){
+        if(adj[u][i] == v)
             break;
+    }
+    if(i != adj[u].size()){
+        v_int::iterator it = adj[u].begin()+i;
+        adj[u].erase(it);
+    }
+    return;
+}
+
+bool dfs(vector<v_int> &adj,vector<bool> &rec_stack,vector<bool> &visited,int s){
+
+	// for detected backedge
+	rec_stack[s] = visited[s] = true;
+    for(auto v : adj[s]){
+    	if(rec_stack[v] || (!visited[v] && dfs(adj,rec_stack,visited,v)))
+    		return true;
+    }
+    rec_stack[s] = false;
+    return false;
+}
+
+void detect_cycle_dfs(vector<v_int> &adj){
+    int V = adj.size();
+    vector<bool> visited(V,false),rec_stack(V,false);
+    FOR(i,V,0){
+        if(!rec_stack[i]){
+            bool res = dfs(adj,rec_stack,visited,i);
+            if(res){
+            	cout << "true\n";
+            	return;
+            }
         }
     }
-    visited[s] = false;
-    return res;
+    cout << "false\n";
+    return;
 }
+
