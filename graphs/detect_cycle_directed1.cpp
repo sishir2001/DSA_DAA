@@ -51,7 +51,16 @@ int main(){
 
 bool detectCycleDFS(Graph &graph,v_int &visited,int source){
 	// using dfs to detect the backedge in the directed graphs
+	visited[source] = 1; // dfs is in progress
 
+	// visiting the ngbrs of source vertex
+	for(auto ngbr : graph[source]){
+		if(visited[ngbr] == 1 || (visited[ngbr] == 0 && detectCycleDFS(graph,visited,ngbr)))
+			return true;
+	}
+	// backtracking step to make status completed 
+	visited[source] = 2; // dfs is in progress
+	return false;
 }
 void detectCycle(Graph &graph,int V){
 	// @param V : vertices in graph
